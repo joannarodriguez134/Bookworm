@@ -8,14 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.managedObjectContext) var moc
+    // make a random order fetch request put it in property student with type FetchedResults<Student>
+    @FetchRequest(sortDescriptors: []) var students: FetchedResults<Student>
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+            List(students) { student in
+                Text(student.name ?? "unknown")
+            }
+            
+            Button("Add") {
+                let firstName = ["Ginny", "Harry", "Hermione", "Luna", "Ron"]
+                
+                let lastName = ["Ginny", "Harry", "Hermione", "Luna", "Ron"]
+                
+                let chosenFirstName = firstName.randomElement()!
+                let chosenLastName = lastName.randomElement()!
+                
+                let student = Student(context: moc)
+                student.id = UUID()
+                student.name = "\(chosenFirstName) \(chosenLastName)"
+                
+                try? moc.save()
+            }
+            
+            
+            
         }
-        .padding()
+       
     }
 }
 
